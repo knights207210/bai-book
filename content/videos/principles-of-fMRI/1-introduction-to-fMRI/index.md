@@ -8,45 +8,46 @@
 
 Q. Which intersections between Mind, Body, and Brain do cognitive, affective, and social neurosciences reside in?
 
-A. TODO
+A. Mind and body.
 
 Q. What research problem can you think of that may reside in the intersection of all three of Mind, Body, and Brain?
 
-A. TODO
+A. Some research problems about brain-computer interaction with physical movements involved.
 
 Q. Which community of experts do you identify yourself with (one or more)?
 
-A. TODO
+A. Maybe brain. But I don't consider myself as "expert".
 
 ## Modalities
 
 Q. What are the two major categories of brain imaging?
 
-A. TODO
+A. Suctural and functional.
 
 Q. What type of brain imaging is more commonly used to study the effects of strokes?
 
-A. TODO
+A. Structural imaging.
 
 Q. What is one major difference between MRI and fMRI in terms of data structure?
 
-A. TODO
+A. fMRI has a temporal or sequential component whereas MRI does not.
 
 ## Spatial and Temporal Resolutions
 
 Q. What are possible modalities to study a phenomenon that changes around every 10 seconds?
 
-A. TODO
+A. BOLD MRI and ASL fMRI.
 
 Q. What are possible modalities to study a phenomenon that changes every second?
 
-A. TODO
+A. MEG and EEG.
 
 Q. To study activities within a brain area about the size of a finger tip, what modalities are possible?
 
-A. TODO
+A. BOLD fMRI.
 
 Q. To study activities within a brain area about the size of needle at a sample rate of 10 hertz, what modalities are possible?
 
-A. TODO
+A. I am not sure. 
+
 
