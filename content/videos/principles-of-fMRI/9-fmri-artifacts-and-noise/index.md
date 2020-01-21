@@ -10,7 +10,7 @@
 
 Q. Why is it not possible to detect the signal in this example?
 
-A. TODO
+A. Because the drift noise is much louder than the original signal.
 
 ## Aliasing
 
@@ -18,11 +18,11 @@ A. TODO
 
 Q. Given a TR of 2000ms, is it possible to avoid aliasing when sampling from the HRF shown above? Why or why not?
 
-A. TODO
+A. As long as the sampling rate is higher than 1Hz, it is possible to avoid aliasing.
 
 Q. What could possibly be the largest TR while avoiding aliasing? Why?
 
-A. TODO
+A. The largest TR to avoid aliasing the 1/(1/2 * sampling rate). Because signals faster than 1/2 the sampling rate will be aliased.
 
 ## Noise Map
 
@@ -30,8 +30,8 @@ A. TODO
 
 Q. If the noise were uniform across the entire brain, what would the spatial map look like instead?
 
-A. TODO
+A. It will look like the spectrum of white noise. Equally noised across the whole map.
 
 Q. If noise were higher closer to the center of the brain, what would the spatial map look like instead?
 
-A. TODO
+A. The center of the brain will be highlighted from the background.
