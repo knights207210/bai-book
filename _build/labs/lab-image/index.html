@@ -9,7 +9,7 @@ pagenum: 16
 prev_page:
   url: /videos/principles-of-fmri/9-fmri-artifacts-and-noise/index.html
 next_page:
-  url: /units/fmri-analysis.html
+  url: /labs/lab-signal-processing/index.html
 suffix: .ipynb
 search: x data nibabel brain using y z mask slices axis test case d image add also get visualize neuroimaging python plot stored nifti access dimensions slice try different subjects part show location code handle load files nii compressed gzip very tool file system nipy org dont already easy pip only need simply either tutorials numpy array matplotlib lets think showing slicing yourself feel represented anatomical not techniques s where tells highlight across below following functionalities e g xyz improve relative center viewing tutorial learn often format gz store both contain structured metadata header nice called installed computer via tell jupyter
 
@@ -114,6 +114,8 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 <span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
 <span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">signal</span>
 </pre></div>
 
 </div>
@@ -281,7 +283,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x11d1fbc88&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x12299b668&gt;</pre>
 </div>
 
 </div>
@@ -338,7 +340,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x11d43d278&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x1229f6be0&gt;</pre>
 </div>
 
 </div>
@@ -397,7 +399,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x11d322b38&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x122abf550&gt;</pre>
 </div>
 
 </div>
@@ -441,6 +443,217 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;./mask.nii.gz&#39;</span><span class="p">)</span>
+<span class="c1">#plt.imshow(mask.get_fdata()[:,:,int(data.shape[2]/2)], &#39;jet&#39;, alpha=0.5, interpolation=&#39;none&#39;)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()[:,:,</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">)]))</span>
+
+<span class="n">brain_size_x</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">brain_size_y</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">brain_size_z</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">brain_size_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">brain_size_x</span><span class="p">)</span>
+<span class="c1">#plt.show()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">brain_size_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()[:,</span><span class="n">i</span><span class="p">,:]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">brain_size_y</span><span class="p">)</span>
+<span class="c1">#plt.show()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+    <span class="n">brain_size_z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()[:,:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">brain_size_z</span><span class="p">)</span>
+<span class="c1">#plt.show()</span>
+
+<span class="n">brain_size_x_crop</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">left</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">right</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="n">brain_size_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">brain_size_x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">elif</span> <span class="n">brain_size_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">brain_size_x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">i</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">left</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">brain_size_x_crop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">brain_size_x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">brain_size_x_crop</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1244267.0
+7337.0
+132
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../images/labs/lab-image/index_19_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brain_size_z</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+    <span class="n">brain_size_z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()[:,:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">brain_size_z</span><span class="p">)</span>
+
+<span class="n">brain_size_z_gra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">brain_size_z</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">brain_size_z_gra</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;function matplotlib.pyplot.show&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../images/labs/lab-image/index_20_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brain_size_z_step</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">brain_size_z</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
+<span class="c1">#plt.plot(brain_size_z)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">brain_size_z_step</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">brain_size_z</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/Users/hanxu/miniconda3/lib/python3.6/site-packages/scipy/signal/signaltools.py:2205: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  Y[sl] = X[sl]
+/Users/hanxu/miniconda3/lib/python3.6/site-packages/scipy/signal/signaltools.py:2207: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  Y[sl] = X[sl]
+/Users/hanxu/miniconda3/lib/python3.6/site-packages/scipy/signal/signaltools.py:2215: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  Y[sl] /= 2  # halve the component at -N/2
+/Users/hanxu/miniconda3/lib/python3.6/site-packages/scipy/signal/signaltools.py:2216: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  temp = Y[sl]
+/Users/hanxu/miniconda3/lib/python3.6/site-packages/scipy/signal/signaltools.py:2218: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  Y[sl] = temp  # set that equal to the component at -N/2
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../images/labs/lab-image/index_21_1.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../images/labs/lab-image/index_21_2.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate the voxels of left and right semisphere</span>
+<span class="n">brain_left</span> <span class="o">=</span> <span class="p">[]</span>
 </pre></div>
 
 </div>
@@ -487,7 +700,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_21_0.png"
+<img src="../../images/labs/lab-image/index_24_0.png"
 >
 </div>
 
@@ -547,7 +760,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_23_1.png"
+<img src="../../images/labs/lab-image/index_26_1.png"
 >
 </div>
 
@@ -651,7 +864,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_26_0.png"
+<img src="../../images/labs/lab-image/index_29_0.png"
 >
 </div>
 
@@ -697,7 +910,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_28_0.png"
+<img src="../../images/labs/lab-image/index_31_0.png"
 >
 </div>
 
@@ -743,7 +956,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_30_0.png"
+<img src="../../images/labs/lab-image/index_33_0.png"
 >
 </div>
 
@@ -866,7 +1079,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_34_0.png"
+<img src="../../images/labs/lab-image/index_37_0.png"
 >
 </div>
 
@@ -911,7 +1124,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_36_0.png"
+<img src="../../images/labs/lab-image/index_39_0.png"
 >
 </div>
 
@@ -1028,7 +1241,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_40_0.png"
+<img src="../../images/labs/lab-image/index_43_0.png"
 >
 </div>
 
@@ -1073,7 +1286,7 @@ You should consider upgrading via the &#39;pip install --upgrade pip&#39; comman
 
 
 <div class="output_png output_subarea ">
-<img src="../../images/labs/lab-image/index_42_0.png"
+<img src="../../images/labs/lab-image/index_45_0.png"
 >
 </div>
 
